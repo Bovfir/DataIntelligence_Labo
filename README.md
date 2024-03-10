@@ -1,3 +1,4 @@
 # Phase_1_DA
-Valentin Guillaume, 
-Sébastien Paul
+Valentin Guillaume et Sébastien Paul
+
+

@@ -1,4 +1,4 @@
 # DataIntelligence_Labo
-Valentin Guillaume et Sébastien Paul IG2A
+Valentin Guillaume IG2A
 
 

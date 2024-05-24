@@ -27,6 +27,7 @@ struct models
 void convertFileToTable(FILE* file, models models[], char fileName[MAX_CHAR_NAME_MOVEMENTS], int nbLines, int nbColumnsToIngore, char movementsNames[MAX_MOVEMENTS][MAX_CHAR_NAME_MOVEMENTS]);
 double calcul(double testSet[], double models[]);
 void traitement(models testSet[], models models[]);
+void initTab(double tab[MAX_TEMPS]);
 
 
 void main(void) {
@@ -38,12 +39,21 @@ void main(void) {
     FILE* pFiTest = fopen(TESTSET_NAME, "r");
     FILE* pFiModel = fopen(MODELS_NAME, "r");
 
+    for (int i = 0; i < MAX_LINES_TESTSET; i++) {
+        memset(testSet[i].v_acc, 0, MAX_TEMPS * sizeof(double));
+    }
+
+    // Initialiser les champs v_acc à 0 pour chaque structure 
+    for (int i = 0; i < MAX_MOVEMENTS; i++) {
+        memset(models[i].v_acc, 0, MAX_TEMPS * sizeof(double));
+    }
+
     if (pFiTest == NULL || pFiModel == NULL) {
         printf("Impossible d'ouvrir le fichier");
     }
     else {
         if (testSet == NULL || models == NULL) {
-            printf("Erreur d'allocation m moire");
+            printf("Erreur d'allocation mémoire");
         }
         else {
             convertFileToTable(pFiTest, testSet, TESTSET_NAME, MAX_LINES_TESTSET, MAX_LINES_IGNORE_TESTSET, movementsNames);
@@ -62,12 +72,12 @@ void main(void) {
 
 
 void convertFileToTable(FILE* file, models models[], char fileName[MAX_CHAR_NAME_MOVEMENTS], int nbLines, int nbColumnsToIngore, char movementsNames[MAX_MOVEMENTS][MAX_CHAR_NAME_MOVEMENTS]) {
-    char* line = malloc(MAX_CHAR_LINE * sizeof(char)); // Allocation dynamique de la m moire pour line
+    char* line = malloc(MAX_CHAR_LINE * sizeof(char)); // Allocation dynamique de la mémoire pour line
     if (line == NULL) {
-        printf("Erreur lors de l'allocation de m moire\n");
+        printf("Erreur lors de l'allocation de mémoire\n");
     }
     else {
-        // Ignorer la premi re ligne (ent te)
+        // Ignorer la première ligne (entête)
         fgets(line, MAX_CHAR_LINE, file);
 
         for (int lineNumber = 0; lineNumber < nbLines; lineNumber++) {
@@ -82,11 +92,11 @@ void convertFileToTable(FILE* file, models models[], char fileName[MAX_CHAR_NAME
             while (iName < MAX_MOVEMENTS && strncmp(token, movementsNames[iName], 3) != 0) {
                 iName++;
             }
-            models[lineNumber].move = iName + 1;
+            models[lineNumber].move = iName +1;
 
-            // Extraction des valeurs de chaque ligne en ignorant le nombre de colonnes n cessaire
+            // Extraction des valeurs de chaque ligne en ignorant le nombre de colonnes nécessaire
             // Pour le testSet , il faut ignorer les 3 premieres colonnes
-            // Pour le pattern, il faut en ignorer qu'une , d'o  la variable nbColumnsToIngore
+            // Pour le pattern, il faut en ignorer qu'une , d'où la variable nbColumnsToIngore
             for (int iTemps = 0; iTemps < MAX_TEMPS + nbColumnsToIngore && token != NULL; ++iTemps) {
 
                 if (iTemps >= nbColumnsToIngore) {
@@ -107,11 +117,11 @@ void traitement(models testSet[], models models[]) {
     double distance;
     double lowValue;
     int iMovementLowDistance;
-    double nbIdenticalValues = 0;
+    double nbIdenticalValues;
 
     int mouvementEnCours;
     int iLine = 0;
-    int count = 0;
+    int count;
 
     while (iLine < MAX_LINES_TESTSET) {
 
@@ -125,7 +135,7 @@ void traitement(models testSet[], models models[]) {
             distance = 0;
             lowValue = HUGE_VAL;
             iMovementLowDistance = 0;
-            
+           
             for (int iMovement = 0; iMovement < 6; iMovement++) {
 
                 distance = calcul(testSet[iLine].v_acc, models[iMovement].v_acc);
@@ -134,11 +144,11 @@ void traitement(models testSet[], models models[]) {
                     lowValue = distance;
                     iMovementLowDistance = iMovement;
                 }
-                //printf("%d : %.17lf\n", iMovement + 1, distance);
+                
             }
             
-            //printf("Low Values : %.17lf\n", lowValue);
-            estimateClasses[iLine] = iMovementLowDistance + 1;
+            
+            estimateClasses[iLine] = iMovementLowDistance +1;
 
             printf("RealClasses : %d et EstimateClasses : %d\n", realClasses[iLine], estimateClasses[iLine]);
             if (realClasses[iLine] == estimateClasses[iLine]) {
@@ -149,7 +159,6 @@ void traitement(models testSet[], models models[]) {
         }
         printf("Pourcentage de valeur identique : %.2lf%%\n", (nbIdenticalValues / count) * 100);
     }
-    //printf("Pourcentage de valeur identique : %.2lf%%", (nbIdenticalValues / MAX_LINES_TESTSET) * 100);
 
 }
 
@@ -157,7 +166,7 @@ double calcul(double testSet[], double models[]) {
 
     double somme = 0;
 
-    for (int iTemps = 0; iTemps < MAX_TEMPS; iTemps++) {
+    for (int iTemps = 0; iTemps < MAX_TEMPS && testSet[iTemps] != 0; iTemps++) {
 
         somme += (testSet[iTemps] - models[iTemps]) * (testSet[iTemps] - models[iTemps]);
     }

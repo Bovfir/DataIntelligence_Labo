@@ -27,8 +27,8 @@ void initTab(double tab[MAX_TEMPS]);
 
 void main(void) {
 
-    //SubStats(*statsSub)[MAX_TEMPS] = malloc(MAX_LINES_TRAINSET * sizeof(*statsSub));
-    SubStats *statsSub = malloc(MAX_LINES_TRAINSET * sizeof(*statsSub));
+    
+    SubStats* statsSub = malloc(MAX_LINES_TRAINSET * sizeof(*statsSub));
 
     double(*averageMovements)[MAX_TEMPS] = malloc(MAX_MOVEMENTS * sizeof(*averageMovements));
     char movementsNames[MAX_MOVEMENTS][MAX_CHAR_NAME_MOVEMENTS] = { "dws","jog","sit","std","ups","wlk" };
@@ -52,7 +52,7 @@ void main(void) {
         double marker[MAX_TEMPS];
         char currentMovement[MAX_CHAR_NAME_MOVEMENTS];
 
-        // \frac{ 38.62319439 }{65} = 0.5942029906
+        
 
         while (iLine < MAX_LINES_TRAINSET) {
             strcpy_s(currentMovement, MAX_CHAR_NAME_MOVEMENTS, movementsNames[indexMovement]); // Ex : dws
@@ -61,11 +61,11 @@ void main(void) {
 
                 for (int iTemps = 0; iTemps < MAX_TEMPS; iTemps++) {
                     averageMovements[indexMovement][iTemps] += statsSub[iLine].stats[iTemps];
-                    
+
                     if (statsSub[iLine].stats[iTemps] != 0) {
                         marker[iTemps] += 1;
                     }
-                    
+
                 }
                 iLine++;
             }
@@ -144,7 +144,6 @@ void printCSVAverages(double data[MAX_MOVEMENTS][MAX_TEMPS], char movementsNames
         }
     }
 }
-
 
 
 
